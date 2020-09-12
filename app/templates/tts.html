@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Speech to text</h1>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.text.label }}<br>
+            {{ form.text }}
+        </p>
+        <p>
+            {{ form.account.label }}<br>
+            {{ form.account }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+    <div>
+        <label for="links">Готовые аудиофайлы</label>
+        <div id="links">
+            {% for link in files %}
+            <a target="_blank" href="/files/{{ link }}">{{ link }}</a>
+            <br>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}3r

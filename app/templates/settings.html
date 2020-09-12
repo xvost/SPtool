@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Settings</h1>
+    <div id="settings">
+    <div id="state">
+        {% if state %}
+            <p id="good">Система настроена</p>
+        {% else %}
+            <p id="warn">Система не настроена<br>
+                Введите данные для создания авторизационных данных.
+            </p>
+        {% endif %}
+    </div>
+    <form id="create" action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.name.label }}<br>
+            {{ form.name(size=32) }}<br>
+            {{ form.oauth.label }}<br>
+            {{ form.oauth(size=32) }}<br>
+            {{ form.folderid.label }}<br>
+            {{ form.folderid(size=32) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+
+<!--    <button id="createbut" onclick="showform()">Создать аккаунт</button>-->
+    </div>
+    <div id="sa">
+        <table border="line" id="salist">
+            <tr>
+                <th>ID</th>
+                <th>Название аккаунта</th>
+                <th>Oauth токен, для удаления</th>
+                <th></th>
+            </tr>
+            {% for sa in salist %}
+            <tr>
+                <td>{{ sa.id }}</td>
+                <td>{{ sa.name }}</td>
+                <td id="oauth"><input type="text"></td>
+                <td><button id="sa{{ sa.id }}" onclick="deletesa('{{ sa.id }}')">Удалить аккаунт</button></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <script type="text/javascript">
+        if ({{ state }}) {
+            document.getElementById('create').hidden = true;
+        }
+<!--        function showform() {-->
+<!--            document.getElementById('create').hidden = false;-->
+<!--        }-->
+        function deletesa(a) {
+            var oauth = document.getElementById('oauth').value
+            var request = new XMLHttpRequest();
+            request.open('GET', '/settings/deletesa/'+a+'?'+'oauth='+oauth);
+            request.send();
+            request.onload = function(event) {
+                if (request.status !=  200) {
+                    alert(`Произошла ошибка. Смотри логи. Ошибка ${request.status}: ${request.statusText}`);
+                }
+                else {
+                    alert(`Готово. ${request.status}: ${request.statusText}`);
+                }
+            }
+        }
+    </script>
+{% endblock %}
