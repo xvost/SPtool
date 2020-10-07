@@ -1,11 +1,9 @@
 import os
-import configparser
+import configobj
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 configfile = 'config.cfg'
-config = configparser.ConfigParser()
-config.read(configfile)
-
+config = configobj.ConfigObj(configfile)
 
 class Config(object):
     global config
@@ -16,3 +14,4 @@ class Config(object):
         'sqlite:///' + os.path.join(basedir, base)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     FILEPATH = os.path.abspath(os.getcwd()+config['app']['filepath'])
+    voices = config['voices']

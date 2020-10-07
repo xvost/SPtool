@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, SelectField
-from wtforms.validators import DataRequired
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, SelectField, DecimalField
+from wtforms.validators import DataRequired, NumberRange
 
 
 class LoginForm(FlaskForm):
@@ -18,6 +18,9 @@ class SttForm(FlaskForm):
 class TtsForm(FlaskForm):
     text = TextAreaField('Text', validators=[DataRequired()])
     account = SelectField('KeyId', validators=[DataRequired()])
+    voice = SelectField('Voice', validators=[DataRequired()])
+    speed = DecimalField('Speed, from 0.1 to 3', validators=
+    [NumberRange(min=0.1, max=3)], default=1)
     submit = SubmitField('Send')
 
 

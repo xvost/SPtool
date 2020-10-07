@@ -10,7 +10,11 @@ class Speech:
         self.apikey = apikey
         self.folderid = folderid
 
-    def tts(self, text, lang='ru-RU', file=None, params=None):
+    def tts(self, text='',
+            lang='ru-RU',
+            file=None,
+            speed=1,
+            voice=None):
         url = "https://tts.api.cloud.yandex.net/speech/v1/tts:synthesize"
         headers = {"Authorization": "Api-Key {}".format(self.apikey)}
         data = {"text": text,
