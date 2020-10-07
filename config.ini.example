@@ -1,0 +1,28 @@
+[server]
+port=5000
+appkey=random-string
+[base]
+file=..\base.sql
+[app]
+filepath=\files
+[voices]
+    [[oksana]]
+    lang=ru-RU
+    [[jane]]
+    lang=ru-Ru
+    [[omazh]]
+    lang=ru-RU
+    [[zahar]]
+    lang=ru-RU
+    [[silaerkan]]
+    lang=tr-TR
+    [[erkanyavas]]
+    lang=tr-TR
+    [[alyss]]
+    lang=en-US
+    [[nick]]
+    lang=rn-US
+    [[alena]]
+    lang=ru-RU
+    [[filipp]]
+    lang=ru-RU
