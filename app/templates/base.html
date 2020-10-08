@@ -1,0 +1,30 @@
+<html>
+    <style>
+        .main {
+        width: 80%;
+        border-left: 1px solid;
+        border-right: 1px solid;
+        padding: 5px;
+        margin: auto;
+        }
+    </style>
+    <head>
+      {% if title %}
+      <title>{{ title }} - SpeechKit Form</title>
+      {% else %}
+      <title>Welcome to SpeechKit Form</title>
+      {% endif %}
+    </head>
+    <body>
+        <div>SpeechKit Form:
+            <a href="/">Home</a>
+            <a href="/stt">Speech to text</a>
+            <a href="/tts">Text to speech</a>
+            <a href="/settings">Settings</a>
+        </div>
+        <hr>
+        <div class="main">
+        {% block content %}{% endblock %}
+        </div>
+    </body>
+</html>
