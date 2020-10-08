@@ -19,6 +19,8 @@ class Speech:
         headers = {"Authorization": "Api-Key {}".format(self.apikey)}
         data = {"text": text,
                 "lang": lang,
+                "voice": voice,
+                "speed": speed,
                 "folderId": self.folderid}
         with requests.post(url, headers=headers, data=data, stream=True) as resp:
             if resp.status_code != 200:

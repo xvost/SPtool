@@ -89,7 +89,7 @@ def tts():
         account = form.account.data
         speed = form.speed.data
         lang = Config.voices[form.voice.data]['lang']
-        voice = Config.voices[form.voice.data]
+        voice = form.voice.data
         filename = str(datetime.timestamp(datetime.now()))+'.ogg'
         fullpath = Config.FILEPATH + '\\' + filename
         apikey, folderid = db.session.query(Iam.key, Iam.folderid).filter(Iam.id == account)[0]
