@@ -92,7 +92,6 @@ def tts():
         voice = Config.voices[form.voice.data]
         filename = str(datetime.timestamp(datetime.now()))+'.ogg'
         fullpath = Config.FILEPATH + '\\' + filename
-        print(speed, lang, voice)
         apikey, folderid = db.session.query(Iam.key, Iam.folderid).filter(Iam.id == account)[0]
         speechkit.setauth(apikey=apikey, folderid=folderid)
         speechkit.tts(text=text,
@@ -112,7 +111,7 @@ def login():
 
 @app.route('/files/<name>', methods=['GET'])
 def getfiles(name=None):
-    return send_from_directory('..\\files\\', name)
+    return send_from_directory(Config.CURENT_DIR+'\\files\\', name)
 
 
 @app.route('/settings/deletesa/<said>', methods=['GET'])

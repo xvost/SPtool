@@ -7,11 +7,11 @@ config = configobj.ConfigObj(configfile)
 
 class Config(object):
     global config
+    CURENT_DIR = os.getcwd()
     SECRET_KEY = config['server']['appkey']
-    base = config['base']['file']
-    open(config['base']['file'], 'w').write('rrrr')
+    BASE_FILE = config['base']['file']
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, base)
+        'sqlite:///' + os.path.join(CURENT_DIR, BASE_FILE)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    FILEPATH = os.path.abspath(os.getcwd()+config['app']['filepath'])
+    FILEPATH = os.path.abspath(CURENT_DIR+config['app']['filepath'])
     voices = config['voices']
