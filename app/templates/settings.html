@@ -39,7 +39,7 @@
             <tr>
                 <td>{{ sa.id }}</td>
                 <td>{{ sa.name }}</td>
-                <td id="oauth"><input type="text"></td>
+                <td><input id="oauthdelete" type="text"></td>
                 <td><button id="sa{{ sa.id }}" onclick="deletesa('{{ sa.id }}')">Удалить аккаунт</button></td>
             </tr>
             {% endfor %}
@@ -53,9 +53,9 @@
 <!--            document.getElementById('create').hidden = false;-->
 <!--        }-->
         function deletesa(a) {
-            var oauth = document.getElementById('oauth').value
+            var oauth = document.getElementById('oauthdelete').value;
             var request = new XMLHttpRequest();
-            request.open('GET', '/settings/deletesa/'+a+'?'+'oauth='+oauth);
+            request.open('DELETE', '/settings/deletesa/'+a+'?'+'oauth='+oauth);
             request.send();
             request.onload = function(event) {
                 if (request.status !=  200) {

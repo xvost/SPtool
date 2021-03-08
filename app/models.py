@@ -8,13 +8,18 @@ class Iam(db.Model):
     said = db.Column(db.String(64), unique=False)
     keyid = db.Column(db.String(120), unique=True)
     key = db.Column(db.String(128))
+    staticid = db.Column(db.String(64))
+    statickey = db.Column(db.String(64))
     date = db.Column(db.Date())
 
     def __repr__(self):
         return [{self.name: self.id}]
 
-    def getkey(self, accoountid):
-        return self.key(accoountid), self.folderid(accoountid)
+    def getkey(self, accountid):
+        return self.key(accountid), self.folderid(accountid)
+
+    def getstatic(self, accountid):
+        return self.staticid(accountid), self.statickey(accountid)
 
 
 class Requests(db.Model):

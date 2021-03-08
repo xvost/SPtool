@@ -19,13 +19,15 @@ class IamApi:
         if self.iamtoken:
             iamtoken = self.iamtoken
         else:
+            print(oauth)
+            print(self.oauth)
             url = 'https://iam.api.cloud.yandex.net/iam/v1/tokens'
             data = {"yandexPassportOauthToken": oauth}
             data = json.dumps(data)
             req = requests.post(url, data=data)
             if req.status_code != 200:
                 abort(req.status_code, req.text)
-                # add logging
+                #ToDo add logging
             reqdata = json.loads(req.text)
             expireat = reqdata['expiresAt']
             self.expireat = expireat
@@ -49,7 +51,6 @@ class IamApi:
                    "Authorization": f"Bearer {self.iamtoken}"}
         req = requests.post(url, data=data, headers=headers)
         reqdata = json.loads(req.text)
-        print(reqdata)
         operationid = reqdata["id"]
         url = 'https://operation.api.cloud.yandex.net/operations/{}'
         headers = {'Authorization': f"Bearer {self.iamtoken}"}
@@ -82,11 +83,12 @@ class IamApi:
                    "Authorization": "Bearer {}".format(self.iamtoken)}
         req = requests.post(url=url.format(self.folderid), headers=headers, data=data)
         if req.status_code != 200:
+            abort(req.status_code, req.text)
             pass
-            #add warning and logging
+            #Todo add warning and logging
         else:
             pass
-            #add notice
+            #ToDo add notice
         return None
 
     def createapikey(self, folderid=None, said=None, apikey=None):
@@ -102,28 +104,59 @@ class IamApi:
         req = requests.post(url=url.format(folderid), headers=headers, data=data)
         if req.status_code != 200:
             pass
-            # add warning and logging
+            #ToDo add warning and logging
         else:
             pass
-            # add notice
+            #ToDo add notice
         reqdata = json.loads(req.text)
         self.apikeyid = reqdata["apiKey"]["id"]
         self.apikey = reqdata["secret"]
         return self.apikey
+
+
+    def createstatickey(self, folderid=None, said=None):
+        '''
+        $ curl -X POST \
+        -H 'Content-Type: application/json' \
+        -H "Authorization: Bearer <IAM-TOKEN>" \
+        -d '{
+            "serviceAccountId": "aje6o61dvog2h6g9a33s",
+            "description": "this key is for my bucket"
+        }' \
+        https://iam.api.cloud.yandex.net/iam/aws-compatibility/v1/accessKeys
+
+            :return:
+        '''
+        if not folderid:
+            folderid = self.folderid
+        if not said:
+            said = self.said
+        url = 'https://iam.api.cloud.yandex.net/iam/aws-compatibility/v1/accessKeys'
+        headers = {"Content-Type": "application/json",
+                   "Authorization": "Bearer {}".format(self.iamtoken)}
+        jsondata = {'serviceAccountId': self.said,
+                    'description': 'storage key for sptool'}
+
+        req = requests.post(url, headers=headers, params=jsondata)
+        staticid = req.json()['accessKey']['keyId']
+        statickey = req.json()['secret']
+        return staticid, statickey
+
 
     def deletesa(self, said=None, oauth=None):
         if not said:
             said = self.said
         token = self.getiamtokenoauth(oauth=oauth)
         url = f'https://iam.api.cloud.yandex.net/iam/v1/serviceAccounts/{said}'
-        headers = {"Content-Type": "application/json",
-                   "Authorization": f"Bearer {token}"}
+        print(url)
+        headers = {"Authorization": f"Bearer {token}"}
         req = requests.delete(url, headers=headers)
         if req.status_code != 200:
             abort(req.status_code, req.text)
             pass
-            # add warning and logging
+            #ToDo add warning and logging
         else:
             pass
-            # add notice
+            #ToDo add notice
         pass
+

@@ -6,12 +6,16 @@ from app.forms import *
 from app.spk import *
 from app.iam import *
 from app.models import *
+from app.storage import Storage
 from app.config import Config
 from datetime import datetime
 from flask import send_from_directory, abort
 from flask import render_template, request, redirect
+from pymediainfo import MediaInfo
 
 speechkit = Speech()
+iam = IamApi()
+storage = Storage()
 
 @app.route('/')
 @app.route('/index')
@@ -41,12 +45,15 @@ def config():
         serviceaccount = cloudiam.createsa()
         cloudiam.seteditorsa()
         apikey = cloudiam.createapikey()
+        staticid, statickey = cloudiam.createstatickey()
         iambase = Iam(name=name,
                       folderid=folderid,
                       said=serviceaccount,
                       keyid=cloudiam.apikeyid,
                       key=apikey,
-                      date=datetime.now()
+                      date=datetime.now(),
+                      statickey=statickey,
+                      staticid=staticid
                       )
         db.session.add(iambase)
         db.session.commit()
@@ -70,8 +77,48 @@ def config():
 
 @app.route('/stt', methods=['GET', 'POST'])
 def stt():
+    accounts = db.session.query(Iam).all()
+    select = [(account.id, account.name) for account in accounts]
     form = SttForm()
-    return render_template('stt.html', title='Main', form=form)
+    form.account.choices = select
+    if form.validate_on_submit():
+        account = form.account.data
+        f = form.pathtofile.data
+        fname = f.filename
+        path = os.path.join(Config.UPLOAD, fname)
+        f.save(path)
+        mediainfo = MediaInfo.parse(path)
+        for track in mediainfo.tracks:
+            if track.track_type == "Audio":
+                if track.format not in ['Opus', 'Wav', 'LPCM']:
+                    abort(400, 'Wrong audio format')
+                params = {'channels': track.channel_s,
+                          'format': track.format,
+                          'duration': track.duration,
+                          'sampleRateHertz': track.sampling_rate}
+            elif track.track_type == "General":
+                pass
+            else:
+                abort(500, 'Wrong file format')
+        apikey = db.session.query(Iam.key).filter(Iam.id == account)[0][0]
+        speechkit.setauth(apikey=apikey)
+        print(params['duration'])
+        if params['duration'] < 30000:
+            response = speechkit.stt_short(path, params)
+            print(response)
+            return render_template('stt.html', title='Main', form=form, text=response)
+        else:
+            storage.statickey, storage.statickeyid = db.session.query(Iam.statickey,
+                                                                      Iam.staticid).filter(Iam.id == account)[0]
+            response = storage.putfile(path, filename=fname)
+            if response:
+                response = speechkit.stt_long(response.get('url'), params)
+                return render_template('stt.html', title='Main', form=form, text=response)
+            else:
+                abort(500, response)
+        return render_template('stt.html', title='Main', form=form)
+    else:
+        return render_template('stt.html', title='Main', form=form)
 
 
 @app.route('/tts', methods=['GET', 'POST'])
@@ -114,13 +161,13 @@ def getfiles(name=None):
     return send_from_directory(Config.CURENT_DIR+'\\files\\', name)
 
 
-@app.route('/settings/deletesa/<said>', methods=['GET'])
+@app.route('/settings/deletesa/<said>', methods=['DELETE'])
 def deletesa(said=None):
     try:
         said = Iam.query.get(said)
         oauth = request.args['oauth']
-        iamapi = IamApi(oauth=oauth)
-        iamapi.deletesa(said=said.said)
+        iam.oauth = oauth
+        iam.deletesa(said=said.said)
         db.session.delete(said)
         db.session.commit()
         return (f'Аккаунт {said.name} удален', 200)

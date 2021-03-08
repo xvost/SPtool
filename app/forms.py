@@ -1,5 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, SelectField, DecimalField
+from flask_wtf.file import FileRequired, FileAllowed
+from wtforms import StringField,\
+    PasswordField,\
+    BooleanField,\
+    SubmitField,\
+    TextAreaField,\
+    SelectField,\
+    DecimalField,\
+    FileField
 from wtforms.validators import DataRequired, NumberRange
 
 
@@ -11,7 +19,8 @@ class LoginForm(FlaskForm):
 
 
 class SttForm(FlaskForm):
-    pathtofile = StringField('File path', validators=[DataRequired()])
+    account = SelectField('KeyId', validators=[DataRequired()])
+    pathtofile = FileField('File path', validators=[FileRequired(), FileAllowed(['ogg', 'OGG Audio only'])])
     submit = SubmitField('Отправить')
 
 

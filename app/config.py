@@ -14,4 +14,5 @@ class Config(object):
         'sqlite:///' + os.path.join(CURENT_DIR, BASE_FILE)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     FILEPATH = os.path.abspath(CURENT_DIR+config['app']['filepath'])
+    UPLOAD = os.path.abspath(CURENT_DIR+config['app']['upload'])
     voices = config['voices']

@@ -30,3 +30,22 @@ class Speech:
                     print(len(chunk))
                     f.write(chunk)
 
+    def stt_short(self, filepath: str, params: dict):
+        with open(filepath, "rb") as f:
+            data = f.read()
+        if params.get('format') == 'Opus':
+            params['format'] = 'oggopus'
+        else:
+            params['format'] = 'lpcm'
+        headers = {"Authorization": "Api-Key {}".format(self.apikey)}
+        req = requests.post('https://stt.api.cloud.yandex.net/speech/v1/stt:recognize',
+                            headers=headers,
+                            params=params,
+                            data=data)
+        if req.status_code != 200 or req.json().get("error_code"):
+            return req.status_code, req.text
+        else:
+            return req.json().get("result")
+
+    def stt_long(self, url, params):
+        return 'Not implemented'
