@@ -16,3 +16,4 @@ class Config(object):
     FILEPATH = os.path.abspath(CURENT_DIR+config['app']['filepath'])
     UPLOAD = os.path.abspath(CURENT_DIR+config['app']['upload'])
     voices = config['voices']
+    ffmpeg = config['ffmpeg']['exec']

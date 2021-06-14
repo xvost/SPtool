@@ -20,7 +20,8 @@ class LoginForm(FlaskForm):
 
 class SttForm(FlaskForm):
     account = SelectField('KeyId', validators=[DataRequired()])
-    pathtofile = FileField('File path', validators=[FileRequired(), FileAllowed(['ogg', 'OGG Audio only'])])
+    pathtofile = FileField('File path', validators=[FileRequired(),
+                                                    FileAllowed(['ogg', 'OGG Audio only'])])
     submit = SubmitField('Отправить')
 
 
@@ -28,8 +29,9 @@ class TtsForm(FlaskForm):
     text = TextAreaField('Text', validators=[DataRequired()])
     account = SelectField('KeyId', validators=[DataRequired()])
     voice = SelectField('Voice', validators=[DataRequired()])
-    speed = DecimalField('Speed, from 0.1 to 3', validators=
-    [NumberRange(min=0.1, max=3)], default=1)
+    speed = DecimalField('Speed, from 0.1 to 3',
+                         validators=[NumberRange(min=0.1, max=3)],
+                         default=1)
     submit = SubmitField('Send')
 
 

@@ -102,7 +102,6 @@ def stt():
                 abort(500, 'Wrong file format')
         apikey = db.session.query(Iam.key).filter(Iam.id == account)[0][0]
         speechkit.setauth(apikey=apikey)
-        print(params['duration'])
         if params['duration'] < 30000:
             response = speechkit.stt_short(path, params)
             print(response)
@@ -137,7 +136,7 @@ def tts():
         speed = form.speed.data
         lang = Config.voices[form.voice.data]['lang']
         voice = form.voice.data
-        filename = str(datetime.timestamp(datetime.now()))+'.ogg'
+        filename = str(datetime.timestamp(datetime.now()))
         fullpath = Config.FILEPATH + '\\' + filename
         apikey, folderid = db.session.query(Iam.key, Iam.folderid).filter(Iam.id == account)[0]
         speechkit.setauth(apikey=apikey, folderid=folderid)
